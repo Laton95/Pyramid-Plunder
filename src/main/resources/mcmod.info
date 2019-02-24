@@ -1,0 +1,12 @@
+[{
+  "modid": "pyramidplunder",
+  "name": "Pyramid Plunder",
+  "description": "A treasure mod inspired by the Runescape minigame Pyramid Plunder.",
+  "version": "1.1",
+  "mcversion": "1.12.2",
+  "logoFile": "assets/pyramidplunder/textures/logo.png",
+  "url": "",
+  "updateJSON": "",
+  "authorList": ["Laton95"],
+  "credits": ""
+}]

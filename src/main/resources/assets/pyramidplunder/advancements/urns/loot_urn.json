@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "pyramidplunder:urn"
+    },
+    "title": {
+      "translate": "advancements.pyramidplunder.urns.loot_urn.title"
+    },
+    "description": {
+      "translate": "advancements.pyramidplunder.urns.loot_urn.description"
+    }
+  },
+  "parent": "pyramidplunder:urns/root",
+  "criteria": {
+    "loot_urn": {
+      "trigger": "pyramidplunder:loot_urn"
+    }
+  }
+}

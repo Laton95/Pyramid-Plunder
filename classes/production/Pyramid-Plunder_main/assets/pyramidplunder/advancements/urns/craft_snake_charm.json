@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "pyramidplunder:snake_charm"
+    },
+    "title": {
+      "translate": "advancements.pyramidplunder.urns.craft_snake_charm.title"
+    },
+    "description": {
+      "translate": "advancements.pyramidplunder.urns.craft_snake_charm.description"
+    }
+  },
+  "parent": "pyramidplunder:urns/snake_bite",
+  "criteria": {
+    "snake_charm": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "pyramidplunder:snake_charm"
+          }
+        ]
+      }
+    }
+  }
+}
