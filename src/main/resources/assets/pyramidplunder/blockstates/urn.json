@@ -1,27 +1,6 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "textures": {
-      "urn": "pyramidplunder:blocks/urn",
-      "neck": "pyramidplunder:blocks/urn_neck",
-      "top": "pyramidplunder:blocks/urn_top",
-      "particle": "pyramidplunder:blocks/urn"
-    },
-    "model": "pyramidplunder:urn",
-    "uvlock": true,
-    "transform": "forge:default-block"
-  },
   "variants": {
-    "normal": [{}],
-    "open": {
-      "true": {},
-      "false": {
-        "submodel": {
-          "lid": {
-            "model": "pyramidplunder:urn_lid"
-          }
-        }
-      }
-    }
+    "open=true": { "model": "pyramidplunder:block/urn_opened" },
+    "open=false": { "model": "pyramidplunder:block/urn_closed" }
   }
 }

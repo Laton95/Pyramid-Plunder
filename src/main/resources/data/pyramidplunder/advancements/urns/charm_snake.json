@@ -1,0 +1,19 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:note_block"
+    },
+    "title": {
+      "translate": "advancements.pyramidplunder.urns.charm_snake.title"
+    },
+    "description": {
+      "translate": "advancements.pyramidplunder.urns.charm_snake.description"
+    }
+  },
+  "parent": "pyramidplunder:urns/craft_snake_charm",
+  "criteria": {
+    "loot_urn": {
+      "trigger": "pyramidplunder:charm_snake"
+    }
+  }
+}

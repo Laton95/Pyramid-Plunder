@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "pyramidplunder:items/snake_charm"
+    "layer0": "pyramidplunder:item/snake_charm"
   }
 }

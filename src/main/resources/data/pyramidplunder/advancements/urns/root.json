@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "item": "pyramidplunder:urn"
+    },
+    "title": {
+      "translate": "advancements.pyramidplunder.urns.root.title"
+    },
+    "description": {
+      "translate": "advancements.pyramidplunder.urns.root.description"
+    },
+    "background": "minecraft:textures/block/stone.png",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "loot_urn": {
+      "trigger": "pyramidplunder:loot_urn"
+    }
+  }
+}

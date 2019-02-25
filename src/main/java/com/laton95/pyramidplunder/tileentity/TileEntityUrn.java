@@ -1,9 +1,9 @@
 package com.laton95.pyramidplunder.tileentity;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
+import com.laton95.pyramidplunder.client.gui.inventory.GuiUrn;
+import com.laton95.pyramidplunder.config.Config;
 import com.laton95.pyramidplunder.inventory.ContainerUrn;
-import com.laton95.pyramidplunder.reference.ModReference;
-import com.laton95.pyramidplunder.util.LogHelper;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -13,47 +13,46 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityLockableLoot;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.storage.loot.LootTableList;
 
-public class TileEntityUrn extends TileEntityLockableLoot
-{
+import java.util.Random;
+
+public class TileEntityUrn extends TileEntityLockableLoot implements IInteractionObject {
 	
-	public static final ResourceLocation URN_LOOT = LootTableList.register(new ResourceLocation(ModReference.MOD_ID, "urn"));
+	public static final ResourceLocation URN_LOOT = LootTableList.register(new ResourceLocation(PyramidPlunder.MOD_ID, "urn"));
 	
-	private NonNullList<ItemStack> stacks = NonNullList.withSize(10, ItemStack.EMPTY);
+	public static int SIZE = 10;
 	
-	private boolean unopened = false;
+	private NonNullList<ItemStack> stacks = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 	
-	private boolean hasSnake;
+	private boolean hasSnake = false;
 	
-	public void setUnopened()
-	{
-		unopened = true;
-		setLootTable(TileEntityUrn.URN_LOOT, world.rand.nextLong());
-		hasSnake = world.rand.nextFloat() > 0.8f;
+	public TileEntityUrn() {
+		super(PyramidPlunder.URN_TILE);
 	}
 	
 	@Override
-	protected NonNullList<ItemStack> getItems()
-	{
+	protected NonNullList<ItemStack> getItems() {
 		return stacks;
 	}
 	
 	@Override
-	public int getSizeInventory()
-	{
-		return 10;
+	protected void setItems(NonNullList<ItemStack> itemsIn) {
+		stacks = itemsIn;
 	}
 	
 	@Override
-	public boolean isEmpty()
-	{
-		for (ItemStack itemstack : stacks)
-		{
-			if (!itemstack.isEmpty())
-			{
+	public int getSizeInventory() {
+		return SIZE;
+	}
+	
+	@Override
+	public boolean isEmpty() {
+		for(ItemStack itemstack : this.stacks) {
+			if(!itemstack.isEmpty()) {
 				return false;
 			}
 		}
@@ -62,102 +61,77 @@ public class TileEntityUrn extends TileEntityLockableLoot
 	}
 	
 	@Override
-	public int getInventoryStackLimit()
-	{
+	public int getInventoryStackLimit() {
 		return 64;
 	}
 	
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
-	{
-		fillWithLoot(playerIn);
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+		this.fillWithLoot(playerIn);
 		return new ContainerUrn(playerInventory, this);
 	}
 	
 	@Override
-	public String getGuiID()
-	{
-		return "pyramidplunder:urn";
+	public String getGuiID() {
+		return GuiUrn.URN_GUI_ID.toString();
 	}
 	
 	@Override
-	public String getName()
-	{
-		return this.hasCustomName() ? customName : "container.urn";
+	public ITextComponent getName() {
+		ITextComponent customName = getCustomName();
+		return (customName != null ? customName : new TextComponentTranslation(PyramidPlunder.MOD_ID + ".container.urn"));
 	}
 	
+	private static String hasSnakeTag = "HasSnake";
+	
 	@Override
-	public void readFromNBT(NBTTagCompound compound)
-	{
-		super.readFromNBT(compound);
-		this.stacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
-		
-		if (!checkLootAndRead(compound))
-		{
+	public void read(NBTTagCompound compound) {
+		super.read(compound);
+		stacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+		if(!this.checkLootAndRead(compound)) {
 			ItemStackHelper.loadAllItems(compound, stacks);
 		}
 		
-		if (compound.hasKey("CustomName", 8))
-		{
-			customName = compound.getString("CustomName");
+		if(compound.contains("CustomName", 8)) {
+			customName = ITextComponent.Serializer.fromJson(compound.getString("CustomName"));
 		}
 		
-		if (compound.hasKey("Unopened"))
-		{
-			unopened = compound.getBoolean("Unopened");
-		}
-		
-		if (compound.hasKey("HasSnake"))
-		{
-			hasSnake = compound.getBoolean("HasSnake");
+		if(compound.contains(hasSnakeTag)) {
+			hasSnake = compound.getBoolean(hasSnakeTag);
 		}
 	}
 	
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
-	{
-		return oldState.getBlock() != newSate.getBlock();
-	}
-	
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound)
-	{
-		super.writeToNBT(compound);
-		
-		if (!this.checkLootAndWrite(compound))
-		{
-			ItemStackHelper.saveAllItems(compound, stacks);
+	public NBTTagCompound write(NBTTagCompound compound) {
+		super.write(compound);
+		if(!this.checkLootAndWrite(compound)) {
+			ItemStackHelper.saveAllItems(compound, this.stacks);
 		}
 		
-		if (this.hasCustomName())
-		{
-			compound.setString("CustomName", customName);
+		ITextComponent itextcomponent = this.getCustomName();
+		if(itextcomponent != null) {
+			compound.putString("CustomName", ITextComponent.Serializer.toJson(itextcomponent));
 		}
 		
-		compound.setBoolean("Unopened", unopened);
-		
-		compound.setBoolean("HasSnake", hasSnake);
+		compound.putBoolean(hasSnakeTag, hasSnake);
 		
 		return compound;
 	}
 	
-	public void setOpened()
-	{
-		this.unopened = false;
+	public boolean hasLoot() {
+		return lootTable != null;
 	}
 	
-	public boolean isUnopened()
-	{
-		return unopened;
+	public void putSnake(Random random) {
+		hasSnake = random.nextFloat() < Config.snakeChance;
 	}
 	
-	public void removeSnake()
-	{
+	public void removeSnake() {
 		hasSnake = false;
+		markDirty();
 	}
 	
-	public boolean hasSnake()
-	{
+	public boolean hasSnake() {
 		return hasSnake;
 	}
 }
