@@ -8,6 +8,7 @@ import com.laton95.pyramidplunder.util.LogHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -19,7 +20,7 @@ public class UrnGenerator implements IWorldGenerator
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider)
 	{
-		if(isSpawnableDimension(world.provider.getDimension()) && world.rand.nextFloat() > 1 - ModConfig.urnChance)
+		if(isSpawnableDimension(world.provider.getDimension()) && isSpawnableBiome(world, chunkX, chunkZ) && world.rand.nextFloat() > 1 - ModConfig.urnChance)
 		{
 			Random rand = new Random(world.getSeed() * chunkX * chunkZ);
 			int xPos = rand.nextInt(16);
@@ -38,6 +39,21 @@ public class UrnGenerator implements IWorldGenerator
 				}
 			}
 		}
+	}
+	
+	private boolean isSpawnableBiome(World world, int chunkX, int chunkZ)
+	{
+		Biome biome = world.getBiome(new BlockPos(chunkX * 16, 0, chunkZ * 16));
+		String biomeName = biome.getRegistryName().toString().substring(biome.getRegistryName().toString().indexOf(':') + 1);
+		for(String name : ModConfig.biomeBlackList)
+		{
+			if(biomeName.equals(name))
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	private boolean isSpawnableDimension(int dimId)

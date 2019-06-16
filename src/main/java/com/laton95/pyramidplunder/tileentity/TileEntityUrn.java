@@ -1,5 +1,6 @@
 package com.laton95.pyramidplunder.tileentity;
 
+import com.laton95.pyramidplunder.config.ModConfig;
 import com.laton95.pyramidplunder.inventory.ContainerUrn;
 import com.laton95.pyramidplunder.reference.ModReference;
 import com.laton95.pyramidplunder.util.LogHelper;
@@ -32,7 +33,7 @@ public class TileEntityUrn extends TileEntityLockableLoot
 	{
 		unopened = true;
 		setLootTable(TileEntityUrn.URN_LOOT, world.rand.nextLong());
-		hasSnake = world.rand.nextFloat() > 0.8f;
+		hasSnake = world.rand.nextFloat() < ModConfig.snakeChance;
 	}
 	
 	@Override
