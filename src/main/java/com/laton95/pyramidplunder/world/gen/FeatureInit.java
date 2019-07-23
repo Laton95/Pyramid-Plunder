@@ -5,21 +5,25 @@ import com.laton95.pyramidplunder.world.gen.feature.ModFeature;
 import com.laton95.pyramidplunder.world.gen.placement.InCaveWithChance;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.CompositeFeature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
+import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import static com.laton95.pyramidplunder.PyramidPlunder.MOD_ID;
-import static net.minecraft.world.biome.Biome.createCompositeFeature;
+import static net.minecraft.world.biome.Biome.createDecoratedFeature;
 
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FeatureInit {
 	
-	private static CompositeFeature feature = createCompositeFeature(ModFeature.URNS, new NoFeatureConfig(), new InCaveWithChance(), new NoPlacementConfig());
+	public static final Placement<NoPlacementConfig> CAVE = new InCaveWithChance(NoPlacementConfig::deserialize);
+	
+	private static ConfiguredFeature feature = createDecoratedFeature(ModFeature.URNS, IFeatureConfig.NO_FEATURE_CONFIG, CAVE, new NoPlacementConfig());
+	
 	
 	@SubscribeEvent
 	public static void setup(FMLServerStartingEvent event) {

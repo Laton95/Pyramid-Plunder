@@ -1,10 +1,10 @@
 package com.laton95.pyramidplunder.proxy;
 
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 
 public class ServerProxy {
 	
-	public EntityPlayerSP getClientPlayer() {
+	public ClientPlayerEntity getClientPlayer() {
 		return null;
 	}
 }

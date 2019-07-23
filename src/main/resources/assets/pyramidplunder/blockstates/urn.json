@@ -1,6 +1,10 @@
 {
   "variants": {
-    "open=true": { "model": "pyramidplunder:block/urn_opened" },
-    "open=false": { "model": "pyramidplunder:block/urn_closed" }
+    "open=true": {
+      "model": "pyramidplunder:block/urn_opened"
+    },
+    "open=false": {
+      "model": "pyramidplunder:block/urn_closed"
+    }
   }
 }

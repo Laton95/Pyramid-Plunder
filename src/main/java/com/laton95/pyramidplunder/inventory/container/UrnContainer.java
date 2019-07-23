@@ -1,16 +1,25 @@
-package com.laton95.pyramidplunder.inventory;
+package com.laton95.pyramidplunder.inventory.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import com.laton95.pyramidplunder.PyramidPlunder;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 
-public class ContainerUrn extends Container {
+public class UrnContainer extends Container {
 	
 	private final IInventory urnInventory;
 	
-	public ContainerUrn(IInventory playerInventory, IInventory urnInventory) {
+	public UrnContainer(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
+		this(id, playerInventory, new Inventory(10));
+	}
+	
+	public UrnContainer(int id, IInventory playerInventory, IInventory urnInventory) {
+		super(PyramidPlunder.URN_CONTAINER_TYPE, id);
 		this.urnInventory = urnInventory;
 		
 		int xPosUrn = 44;
@@ -37,12 +46,12 @@ public class ContainerUrn extends Container {
 	}
 	
 	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
-		return urnInventory.isUsableByPlayer(playerIn);
+	public boolean canInteractWith(PlayerEntity player) {
+		return urnInventory.isUsableByPlayer(player);
 	}
 	
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+	public ItemStack transferStackInSlot(PlayerEntity player, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(index);
 		
@@ -70,7 +79,7 @@ public class ContainerUrn extends Container {
 				return ItemStack.EMPTY;
 			}
 			
-			slot.onTake(playerIn, itemstack1);
+			slot.onTake(player, itemstack1);
 		}
 		
 		return itemstack;

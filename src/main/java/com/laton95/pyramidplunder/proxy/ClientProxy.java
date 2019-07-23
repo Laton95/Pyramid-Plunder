@@ -1,12 +1,12 @@
 package com.laton95.pyramidplunder.proxy;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 
 public class ClientProxy extends ServerProxy {
 	
 	@Override
-	public EntityPlayerSP getClientPlayer() {
+	public ClientPlayerEntity getClientPlayer() {
 		return Minecraft.getInstance().player;
 	}
 }

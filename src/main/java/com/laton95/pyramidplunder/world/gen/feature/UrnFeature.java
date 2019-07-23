@@ -1,35 +1,41 @@
 package com.laton95.pyramidplunder.world.gen.feature;
 
 import com.laton95.pyramidplunder.PyramidPlunder;
-import com.laton95.pyramidplunder.block.BlockUrn;
-import com.laton95.pyramidplunder.tileentity.TileEntityUrn;
+import com.laton95.pyramidplunder.block.UrnBlock;
+import com.laton95.pyramidplunder.tileentity.UrnTileEntity;
+import com.mojang.datafixers.Dynamic;
+import net.minecraft.block.Blocks;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Fluids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.IChunkGenSettings;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public class UrnFeature extends Feature<NoFeatureConfig> {
 	
+	public UrnFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i49878_1_) {
+		super(p_i49878_1_);
+	}
+	
 	@Override
-	public boolean place(IWorld world, IChunkGenerator<? extends IChunkGenSettings> chunkGenerator, Random rand, BlockPos pos, NoFeatureConfig config) {
+	public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
 		IFluidState ifluidstate = world.getFluidState(pos);
-		world.setBlockState(pos, PyramidPlunder.URN.getDefaultState().with(BlockUrn.OPEN, false).with(BlockUrn.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER), 11);
+		world.setBlockState(pos, PyramidPlunder.URN.getDefaultState().with(UrnBlock.OPEN, false).with(UrnBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER), 11);
 		
 		if(!world.getBlockState(pos.down()).getMaterial().blocksMovement()) {
 			world.setBlockState(pos.down(), Blocks.STONE.getDefaultState(), 11);
 		}
 		
-		TileEntityUrn urn = (TileEntityUrn) world.getTileEntity(pos);
+		UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
 		if(urn != null) {
-			urn.setLootTable(TileEntityUrn.URN_LOOT, rand.nextLong());
-			urn.putSnake(rand);
+			urn.setLootTable(UrnTileEntity.URN_LOOT, random.nextLong());
+			urn.putSnake(random);
 		}
 		
 		return true;

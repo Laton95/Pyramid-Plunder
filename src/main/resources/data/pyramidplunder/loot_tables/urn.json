@@ -2,58 +2,29 @@
   "pools": [
     {
       "name": "main",
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "item",
-          "name": "minecraft:golden_apple",
-          "weight": 10
-        },
-        {
-          "type": "item",
-          "name": "minecraft:name_tag",
-          "weight": 30
-        },
-        {
-          "type": "item",
-          "name": "minecraft:book",
-          "weight": 10,
-          "functions": [
-            {
-              "function": "enchant_randomly"
-            }
-          ]
-        },
-        {
-          "type": "empty",
-          "weight": 5
-        }
-      ]
-    },
-    {
-      "name": "treasure",
       "rolls": {
-        "min": 1,
-        "max": 2
+        "min": 2,
+        "max": 3
       },
       "entries": [
         {
           "type": "item",
           "name": "minecraft:gold_nugget",
+          "weight": 60,
           "functions": [
             {
               "function": "set_count",
               "count": {
                 "min": 2,
-                "max": 10
+                "max": 7
               }
             }
-          ],
-          "weight": 50
+          ]
         },
         {
           "type": "item",
           "name": "minecraft:gold_ingot",
+          "weight": 25,
           "functions": [
             {
               "function": "set_count",
@@ -62,12 +33,12 @@
                 "max": 3
               }
             }
-          ],
-          "weight": 15
+          ]
         },
         {
           "type": "item",
-          "name": "minecraft:diamond",
+          "name": "minecraft:emerald",
+          "weight": 15,
           "functions": [
             {
               "function": "set_count",
@@ -76,8 +47,42 @@
                 "max": 2
               }
             }
-          ],
-          "weight": 3
+          ]
+        }
+      ]
+    },
+    {
+      "name": "treasure",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:name_tag",
+          "weight": 40,
+          "functions": [
+            {
+              "function": "set_count",
+              "count": {
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:ender_pearl",
+          "weight": 30
+        },
+        {
+          "type": "item",
+          "name": "minecraft:diamond",
+          "weight": 15
+        },
+        {
+          "type": "item",
+          "name": "minecraft:golden_apple",
+          "weight": 15
         }
       ]
     },
@@ -85,41 +90,32 @@
       "name": "rare",
       "rolls": {
         "min": 0,
-        "max": 2
+        "max": 1
       },
       "entries": [
         {
-          "type": "item",
-          "name": "minecraft:emerald",
-          "functions": [
-            {
-              "function": "set_count",
-              "count": {
-                "min": 1,
-                "max": 3
-              }
-            }
-          ],
-          "weight": 30
+          "type": "empty",
+          "weight": 60
         },
         {
           "type": "item",
           "name": "minecraft:enchanted_golden_apple",
+          "weight": 9
+        },
+        {
+          "type": "item",
+          "name": "minecraft:totem_of_undying",
           "weight": 1
         },
         {
           "type": "item",
-          "name": "minecraft:ender_pearl",
+          "name": "minecraft:book",
+          "weight": 30,
           "functions": [
             {
-              "function": "set_count",
-              "count": {
-                "min": 1,
-                "max": 2
-              }
+              "function": "enchant_randomly"
             }
-          ],
-          "weight": 10
+          ]
         }
       ]
     }

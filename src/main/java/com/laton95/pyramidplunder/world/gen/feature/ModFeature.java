@@ -5,5 +5,5 @@ import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 public class ModFeature {
 	
-	public static final Feature<NoFeatureConfig> URNS = new UrnFeature();
+	public static final Feature<NoFeatureConfig> URNS = new UrnFeature(NoFeatureConfig::deserialize);
 }

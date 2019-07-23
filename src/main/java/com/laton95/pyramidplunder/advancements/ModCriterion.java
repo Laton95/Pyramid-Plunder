@@ -8,8 +8,8 @@ import com.google.gson.JsonObject;
 import com.laton95.pyramidplunder.PyramidPlunder;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.criterion.AbstractCriterionInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.advancements.criterion.CriterionInstance;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashSet;
@@ -38,7 +38,7 @@ public class ModCriterion implements ICriterionTrigger {
 	 *
 	 * @param parPlayer the player
 	 */
-	public void trigger(EntityPlayerMP parPlayer) {
+	public void trigger(ServerPlayerEntity parPlayer) {
 		ModCriterion.Listeners tameanimaltrigger$listeners = (ModCriterion.Listeners) this.listeners.get(parPlayer.getAdvancements());
 		
 		if(tameanimaltrigger$listeners != null) {
@@ -48,7 +48,7 @@ public class ModCriterion implements ICriterionTrigger {
 	 * @see net.minecraft.advancements.ICriterionTrigger#getId()
 	 */
 	
-	public static class Instance extends AbstractCriterionInstance {
+	public static class Instance extends CriterionInstance {
 		
 		/**
 		 * Instantiates a new instance.
@@ -116,7 +116,7 @@ public class ModCriterion implements ICriterionTrigger {
 		 *
 		 * @param player the player
 		 */
-		public void trigger(EntityPlayerMP player) {
+		public void trigger(ServerPlayerEntity player) {
 			List list = null;
 			
 			for(ICriterionTrigger.Listener listener : (HashSet<Listener>) this.listeners) {
