@@ -13,7 +13,7 @@ description='''
 A simple treasure mod inspired by the Runescape minigame Pyramid Plunder.
 '''
 
-[[dependencies.biggerstructureblock]]
+[[dependencies.pyramidplunder]]
     modId="forge"
     mandatory=true
     versionRange="[${forge_version},)"
