@@ -22,3 +22,4 @@ eclipse
 run
 .vs
 *.kotlin_module
+*.xcf
