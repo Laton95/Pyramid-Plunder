@@ -20,7 +20,7 @@ group = 'com.laton95.pyramidplunder'
 archivesBaseName = 'PyramidPlunder'
 
 minecraft {
-	mappings channel: 'snapshot', version: '20190719-1.14.3'
+	mappings channel: 'snapshot', version: mappings_version
 
     runs {
         client {
