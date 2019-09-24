@@ -1,6 +1,10 @@
 package com.laton95.pyramidplunder.config;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,7 +34,7 @@ public class Config {
 	
 	public static double snakeChance = 0.3;
 	
-	public static List<? extends Integer> dimensionBlacklist = getDimensionBlacklistDefault();
+	public static List<? extends String> dimensionBlacklist = getDimensionBlacklistDefault();
 	
 	public static List<? extends String> biomeBlacklist = new ArrayList<>();
 	
@@ -60,7 +64,7 @@ public class Config {
 		
 		public ForgeConfigSpec.DoubleValue snakeChance;
 		
-		public ForgeConfigSpec.ConfigValue<List<? extends Integer>> dimensionBlacklist;
+		public ForgeConfigSpec.ConfigValue<List<? extends String>> dimensionBlacklist;
 		
 		public ForgeConfigSpec.ConfigValue<List<? extends String>> biomeBlacklist;
 		
@@ -106,13 +110,17 @@ public class Config {
 		}
 	}
 	
-	private static List<Integer> getDimensionBlacklistDefault() {
-		ArrayList<Integer> output = new ArrayList<>();
+	private static List<String> getDimensionBlacklistDefault() {
+		ArrayList<String> output = new ArrayList<>();
 		
-		output.add(1);
-		output.add(-1);
+		output.add("minecraft:the_nether");
+		output.add("minecraft:the_end");
 		
 		return output;
+	}
+	
+	public static boolean isDimensionBlacklisted(IWorld world) {
+		return dimensionBlacklist.contains(world.getDimension().getType().getRegistryName().toString());
 	}
 	
 	public static boolean isBiomeBlacklisted(Biome biome) {

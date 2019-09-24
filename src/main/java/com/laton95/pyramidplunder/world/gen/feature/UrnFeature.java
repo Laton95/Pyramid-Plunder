@@ -2,6 +2,7 @@ package com.laton95.pyramidplunder.world.gen.feature;
 
 import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.block.UrnBlock;
+import com.laton95.pyramidplunder.config.Config;
 import com.laton95.pyramidplunder.tileentity.UrnTileEntity;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.Blocks;
@@ -25,19 +26,23 @@ public class UrnFeature extends Feature<NoFeatureConfig> {
 	
 	@Override
 	public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> chunkGenerator, Random random, BlockPos pos, NoFeatureConfig config) {
-		IFluidState ifluidstate = world.getFluidState(pos);
-		world.setBlockState(pos, PyramidPlunder.URN.getDefaultState().with(UrnBlock.OPEN, false).with(UrnBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER), 11);
-		
-		if(!world.getBlockState(pos.down()).getMaterial().blocksMovement()) {
-			world.setBlockState(pos.down(), Blocks.STONE.getDefaultState(), 11);
+		if(!Config.isDimensionBlacklisted(world)) {
+			IFluidState ifluidstate = world.getFluidState(pos);
+			world.setBlockState(pos, PyramidPlunder.URN.getDefaultState().with(UrnBlock.OPEN, false).with(UrnBlock.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER), 11);
+			
+			if(!world.getBlockState(pos.down()).getMaterial().blocksMovement()) {
+				world.setBlockState(pos.down(), Blocks.STONE.getDefaultState(), 11);
+			}
+			
+			UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
+			if(urn != null) {
+				urn.setLootTable(UrnTileEntity.URN_LOOT, random.nextLong());
+				urn.putSnake(random);
+			}
+			
+			return true;
 		}
 		
-		UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
-		if(urn != null) {
-			urn.setLootTable(UrnTileEntity.URN_LOOT, random.nextLong());
-			urn.putSnake(random);
-		}
-		
-		return true;
+		return false;
 	}
 }
