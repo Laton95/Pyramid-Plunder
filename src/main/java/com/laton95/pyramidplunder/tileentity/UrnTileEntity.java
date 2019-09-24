@@ -9,20 +9,28 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class UrnTileEntity extends LockableLootTileEntity {
 	
 	public static final ResourceLocation URN_LOOT = new ResourceLocation(PyramidPlunder.MOD_ID, "urn");
 	
-	public static int SIZE = 10;
+	private NonNullList<ItemStack> inventory = NonNullList.withSize(10, ItemStack.EMPTY);
 	
-	private NonNullList<ItemStack> stacks = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+	private LazyOptional<IItemHandler> inventoryHandler = LazyOptional.of(this::createInventory);
 	
 	private boolean hasSnake = false;
 	
@@ -32,23 +40,23 @@ public class UrnTileEntity extends LockableLootTileEntity {
 	
 	@Override
 	protected NonNullList<ItemStack> getItems() {
-		return stacks;
+		return inventory;
 	}
 	
 	@Override
-	protected void setItems(NonNullList<ItemStack> itemsIn) {
-		stacks = itemsIn;
+	protected void setItems(NonNullList<ItemStack> items) {
+		inventory = items;
 	}
 	
 	@Override
 	public int getSizeInventory() {
-		return SIZE;
+		return inventory.size();
 	}
 	
 	@Override
 	public boolean isEmpty() {
-		for(ItemStack itemstack : this.stacks) {
-			if(!itemstack.isEmpty()) {
+		for(ItemStack itemstack : inventory) {
+			if (!itemstack.isEmpty()) {
 				return false;
 			}
 		}
@@ -81,37 +89,28 @@ public class UrnTileEntity extends LockableLootTileEntity {
 	private static String hasSnakeTag = "HasSnake";
 	
 	@Override
-	public void read(CompoundNBT compound) {
-		super.read(compound);
-		stacks = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
-		if(!this.checkLootAndRead(compound)) {
-			ItemStackHelper.loadAllItems(compound, stacks);
+	public void read(CompoundNBT nbt) {
+		super.read(nbt);
+		inventory = NonNullList.withSize(10, ItemStack.EMPTY);
+		if (!this.checkLootAndRead(nbt)) {
+			ItemStackHelper.loadAllItems(nbt, inventory);
 		}
 		
-		if(compound.contains("CustomName", 8)) {
-			setCustomName(ITextComponent.Serializer.fromJson(compound.getString("CustomName")));
-		}
-		
-		if(compound.contains(hasSnakeTag)) {
-			hasSnake = compound.getBoolean(hasSnakeTag);
+		if(nbt.contains(hasSnakeTag)) {
+			hasSnake = nbt.getBoolean(hasSnakeTag);
 		}
 	}
 	
 	@Override
-	public CompoundNBT write(CompoundNBT compound) {
-		super.write(compound);
-		if(!this.checkLootAndWrite(compound)) {
-			ItemStackHelper.saveAllItems(compound, this.stacks);
+	public CompoundNBT write(CompoundNBT nbt) {
+		super.write(nbt);
+		if (!this.checkLootAndWrite(nbt)) {
+			ItemStackHelper.saveAllItems(nbt, inventory);
 		}
 		
-		ITextComponent itextcomponent = this.getCustomName();
-		if(itextcomponent != null) {
-			compound.putString("CustomName", ITextComponent.Serializer.toJson(itextcomponent));
-		}
+		nbt.putBoolean(hasSnakeTag, hasSnake);
 		
-		compound.putBoolean(hasSnakeTag, hasSnake);
-		
-		return compound;
+		return nbt;
 	}
 	
 	public boolean hasLoot() {
@@ -129,5 +128,18 @@ public class UrnTileEntity extends LockableLootTileEntity {
 	
 	public boolean hasSnake() {
 		return hasSnake;
+	}
+	
+	private IItemHandler createInventory() {
+		return new InvWrapper(this);
+	}
+	
+	@Nullable
+	@Override
+	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return inventoryHandler.cast();
+		}
+		return super.getCapability(capability, side);
 	}
 }

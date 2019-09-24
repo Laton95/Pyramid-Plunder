@@ -27,6 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -37,7 +38,17 @@ import javax.annotation.Nullable;
 
 public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 	
-	private static final VoxelShape SHAPE = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D);
+	private static final VoxelShape LID = Block.makeCuboidShape(2.0D, 15.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+	
+	private static final VoxelShape TOP = Block.makeCuboidShape(1.0D, 13.0D, 1.0D, 15.0D, 15.0D, 15.0D);
+	
+	private static final VoxelShape NECK = Block.makeCuboidShape(3.0D, 10.0D, 3.0D, 13.0D, 13.0D, 13.0D);
+	
+	private static final VoxelShape BOTTOM = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
+	
+	private static final VoxelShape SHAPE = VoxelShapes.or(TOP, NECK, BOTTOM);
+	
+	private static final VoxelShape SHAPE_WITH_LID = VoxelShapes.or(SHAPE, LID);
 	
 	public static final BooleanProperty OPEN = BooleanProperty.create("open");
 	
@@ -55,7 +66,7 @@ public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 	
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-		return SHAPE;
+		return state.get(OPEN) ? SHAPE : SHAPE_WITH_LID;
 	}
 	
 	@Override
@@ -66,8 +77,7 @@ public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-		return getDefaultState().with(WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+		return this.getDefaultState().with(WATERLOGGED, context.getWorld().getFluidState(context.getPos()).getFluid() == Fluids.WATER);
 	}
 	
 	@Nullable

@@ -8,30 +8,27 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
+import net.minecraft.world.gen.placement.ChanceConfig;
 import net.minecraft.world.gen.placement.Placement;
 
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class InCaveWithChance extends Placement<NoPlacementConfig> {
+public class InCaveWithChance extends Placement<ChanceConfig> {
 	
-	public InCaveWithChance(Function<Dynamic<?>, ? extends NoPlacementConfig> p_i51371_1_) {
-		super(p_i51371_1_);
+	public InCaveWithChance(Function<Dynamic<?>, ? extends ChanceConfig> config) {
+		super(config);
 	}
 	
 	@Override
-	public Stream<BlockPos> getPositions(IWorld world, ChunkGenerator<? extends GenerationSettings> chunkGenerator, Random random, NoPlacementConfig noPlacementConfig, BlockPos pos) {
-		if(!Config.dimensionBlacklist.contains(world.getDimension().getType().getId()) && random.nextFloat() <= Config.urnChance) {
+	public Stream<BlockPos> getPositions(IWorld world, ChunkGenerator<? extends GenerationSettings> chunkGenerator, Random random, ChanceConfig config, BlockPos pos) {
+		if (random.nextFloat() < 1.0F / (float)config.chance) {
 			int x = random.nextInt(16);
 			int z = random.nextInt(16);
-			BlockPos placement = getLowestCave(world, new BlockPos(pos.getX() + x, 0, pos.getZ() + z));
-			if(placement != null) {
-				
-				if(world.getHeight(Heightmap.Type.OCEAN_FLOOR_WG, placement.getX(), placement.getZ()) != placement.getY()) {
-					return Stream.of(new BlockPos(placement.getX(), placement.getY(), placement.getZ()));
-				}
+			BlockPos blockpos = getLowestCave(world, new BlockPos(pos.getX() + x, 0, pos.getZ() + z));
+			if(blockpos != null && world.getHeight(Heightmap.Type.OCEAN_FLOOR_WG, blockpos.getX(), blockpos.getZ()) != blockpos.getY()) {
+				return Stream.of(blockpos);
 			}
 		}
 		

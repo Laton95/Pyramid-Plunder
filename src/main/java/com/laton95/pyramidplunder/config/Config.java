@@ -10,14 +10,14 @@ import java.util.List;
 
 public class Config {
 	
-	public static final ServerConfig SERVER;
+	public static final CommonConfig COMMON;
 	
-	public static final ForgeConfigSpec SERVER_SPEC;
+	public static final ForgeConfigSpec COMMON_SPEC;
 	
 	static {
-		final Pair<ServerConfig, ForgeConfigSpec> specPair = new Builder().configure(ServerConfig::new);
-		SERVER_SPEC = specPair.getRight();
-		SERVER = specPair.getLeft();
+		final Pair<CommonConfig, ForgeConfigSpec> specPair = new Builder().configure(CommonConfig::new);
+		COMMON_SPEC = specPair.getRight();
+		COMMON = specPair.getLeft();
 	}
 	
 	public static boolean generateUrns = true;
@@ -35,20 +35,20 @@ public class Config {
 	public static List<? extends String> biomeBlacklist = new ArrayList<>();
 	
 	public static void load() {
-		generateUrns = SERVER.generateUrns.get();
-		urnChance = SERVER.urnChance.get();
-		maxHeight = SERVER.maxHeight.get();
-		minHeight = SERVER.minHeight.get();
-		snakeChance = SERVER.snakeChance.get();
-		dimensionBlacklist = SERVER.dimensionBlacklist.get();
-		biomeBlacklist = SERVER.biomeBlacklist.get();
+		generateUrns = COMMON.generateUrns.get();
+		urnChance = COMMON.urnChance.get();
+		maxHeight = COMMON.maxHeight.get();
+		minHeight = COMMON.minHeight.get();
+		snakeChance = COMMON.snakeChance.get();
+		dimensionBlacklist = COMMON.dimensionBlacklist.get();
+		biomeBlacklist = COMMON.biomeBlacklist.get();
 		
 		if(maxHeight < minHeight) {
 			throw new IllegalArgumentException(String.format("Max height cannot be larger than min height: %d > %d", minHeight, maxHeight));
 		}
 	}
 	
-	public static class ServerConfig {
+	public static class CommonConfig {
 		
 		public ForgeConfigSpec.BooleanValue generateUrns;
 		
@@ -64,7 +64,7 @@ public class Config {
 		
 		public ForgeConfigSpec.ConfigValue<List<? extends String>> biomeBlacklist;
 		
-		ServerConfig(Builder builder) {
+		CommonConfig(Builder builder) {
 			builder.push("general");
 			
 			generateUrns = builder

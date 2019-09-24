@@ -1,53 +1,60 @@
 package com.laton95.pyramidplunder.inventory.container;
 
 import com.laton95.pyramidplunder.PyramidPlunder;
+import com.laton95.pyramidplunder.tileentity.UrnTileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 public class UrnContainer extends Container {
 	
-	private final IInventory urnInventory;
+	private UrnTileEntity urn;
+	private IItemHandler playerInventory;
 	
 	public UrnContainer(int id, PlayerInventory playerInventory, PacketBuffer packetBuffer) {
-		this(id, playerInventory, new Inventory(10));
+		this(id, playerInventory, (UrnTileEntity) PyramidPlunder.proxy.getClientWorld().getTileEntity(packetBuffer.readBlockPos()));
 	}
 	
-	public UrnContainer(int id, IInventory playerInventory, IInventory urnInventory) {
+	public UrnContainer(int id, PlayerInventory playerInventory, UrnTileEntity urn) {
 		super(PyramidPlunder.URN_CONTAINER_TYPE, id);
-		this.urnInventory = urnInventory;
+		this.urn = urn;
+		this.playerInventory = new InvWrapper(playerInventory);
 		
-		int xPosUrn = 44;
-		int yPosUrn = 33;
-		
-		for(int i = 0; i < 2; ++i) {
-			for(int j = 0; j < 5; ++j) {
-				addSlot(new Slot(urnInventory, j + i * 5, xPosUrn + j * 18, yPosUrn + i * 18));
+		urn.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(urnInventory -> {
+			int xPosUrn = 44;
+			int yPosUrn = 33;
+			
+			for(int i = 0; i < 2; ++i) {
+				for(int j = 0; j < 5; ++j) {
+					addSlot(new SlotItemHandler(urnInventory, j + i * 5, xPosUrn + j * 18, yPosUrn + i * 18));
+				}
 			}
-		}
-		
-		int xPosPlayer = 8;
-		int yPosPlayer = 81;
-		
-		for(int i = 0; i < 3; ++i) {
-			for(int j = 0; j < 9; ++j) {
-				addSlot(new Slot(playerInventory, j + i * 9 + 9, xPosPlayer + j * 18, yPosPlayer + i * 18));
+			
+			int xPosPlayer = 8;
+			int yPosPlayer = 81;
+			
+			for(int i = 0; i < 3; ++i) {
+				for(int j = 0; j < 9; ++j) {
+					addSlot(new SlotItemHandler(this.playerInventory, j + i * 9 + 9, xPosPlayer + j * 18, yPosPlayer + i * 18));
+				}
 			}
-		}
-		
-		for(int i = 0; i < 9; ++i) {
-			addSlot(new Slot(playerInventory, i, xPosPlayer + i * 18, yPosPlayer + 58));
-		}
+			
+			for(int i = 0; i < 9; ++i) {
+				addSlot(new SlotItemHandler(this.playerInventory, i, xPosPlayer + i * 18, yPosPlayer + 58));
+			}
+		});
 	}
 	
 	@Override
 	public boolean canInteractWith(PlayerEntity player) {
-		return urnInventory.isUsableByPlayer(player);
+		return urn.isUsableByPlayer(player);
 	}
 	
 	@Override
