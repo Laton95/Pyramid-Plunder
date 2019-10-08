@@ -1,9 +1,9 @@
 package com.laton95.pyramidplunder.config;
 
-import com.laton95.pyramidplunder.reference.ModReference;
+import com.laton95.pyramidplunder.PyramidPlunder;
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = ModReference.MOD_ID)
+@Config(modid = PyramidPlunder.MOD_ID)
 @Config.LangKey("pyramidplunder.config.title")
 public class ModConfig
 {

@@ -1,6 +1,5 @@
 package com.laton95.pyramidplunder.inventory;
 
-import com.laton95.pyramidplunder.util.LogHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

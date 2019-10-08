@@ -3,13 +3,13 @@ package com.laton95.pyramidplunder.block;
 import com.laton95.pyramidplunder.GuiHandler;
 import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.advancement.Triggers;
-import com.laton95.pyramidplunder.init.ModItems;
 import com.laton95.pyramidplunder.tileentity.TileEntityUrn;
-import com.laton95.pyramidplunder.util.LogHelper;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,7 +19,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -28,7 +31,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class BlockUrn extends ModBlockContainer
+public class BlockUrn extends BlockContainer
 {
 	
 	private static final AxisAlignedBB OPEN_BB = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
@@ -37,7 +40,11 @@ public class BlockUrn extends ModBlockContainer
 	
 	public BlockUrn()
 	{
-		super("urn", Material.ROCK, 1.5f, 10.0f, "pickaxe", 1, true);
+		super(Material.ROCK);
+		setCreativeTab(CreativeTabs.DECORATIONS);
+		setHardness(1.5f);
+		setResistance(10.0f);
+		setHarvestLevel("pickaxe", 1);
 	}
 	
 	@Override
@@ -93,7 +100,7 @@ public class BlockUrn extends ModBlockContainer
 			}
 			else
 			{
-				if(tileEntity != null && tileEntity.hasSnake() && playerIn.getHeldItem(hand).getItem() == ModItems.SNAKE_CHARM)
+				if(tileEntity != null && tileEntity.hasSnake() && playerIn.getHeldItem(hand).getItem() == PyramidPlunder.SNAKE_CHARM)
 				{
 					Triggers.CHARM_SNAKE.trigger((EntityPlayerMP) playerIn);
 					tileEntity.removeSnake();

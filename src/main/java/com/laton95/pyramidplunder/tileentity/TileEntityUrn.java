@@ -1,9 +1,8 @@
 package com.laton95.pyramidplunder.tileentity;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.config.ModConfig;
 import com.laton95.pyramidplunder.inventory.ContainerUrn;
-import com.laton95.pyramidplunder.reference.ModReference;
-import com.laton95.pyramidplunder.util.LogHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -21,7 +20,7 @@ import net.minecraft.world.storage.loot.LootTableList;
 public class TileEntityUrn extends TileEntityLockableLoot
 {
 	
-	public static final ResourceLocation URN_LOOT = LootTableList.register(new ResourceLocation(ModReference.MOD_ID, "urn"));
+	public static final ResourceLocation URN_LOOT = LootTableList.register(new ResourceLocation(PyramidPlunder.MOD_ID, "urn"));
 	
 	private NonNullList<ItemStack> stacks = NonNullList.withSize(10, ItemStack.EMPTY);
 	

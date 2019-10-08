@@ -1,8 +1,7 @@
 package com.laton95.pyramidplunder.client.gui;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.inventory.ContainerUrn;
-import com.laton95.pyramidplunder.reference.ModReference;
-import com.laton95.pyramidplunder.util.LogHelper;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -13,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class GuiUrn extends GuiContainer
 {
 	
-	private final ResourceLocation guiTexture = new ResourceLocation(ModReference.MOD_ID, "textures/gui/urn.png");
+	private final ResourceLocation guiTexture = new ResourceLocation(PyramidPlunder.MOD_ID, "textures/gui/urn.png");
 	
 	private final IInventory playerInventory;
 	

@@ -1,10 +1,9 @@
 package com.laton95.pyramidplunder.world;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.block.BlockUrn;
 import com.laton95.pyramidplunder.config.ModConfig;
-import com.laton95.pyramidplunder.init.ModBlocks;
 import com.laton95.pyramidplunder.tileentity.TileEntityUrn;
-import com.laton95.pyramidplunder.util.LogHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,7 +29,7 @@ public class UrnGenerator implements IWorldGenerator
 			
 			if(urnPos != null)
 			{
-				world.setBlockState(urnPos, ModBlocks.URN.getDefaultState().withProperty(BlockUrn.OPEN, false), 2);
+				world.setBlockState(urnPos, PyramidPlunder.URN.getDefaultState().withProperty(BlockUrn.OPEN, false), 2);
 				
 				TileEntityUrn urn = (TileEntityUrn) world.getTileEntity(urnPos);
 				if(urn != null)

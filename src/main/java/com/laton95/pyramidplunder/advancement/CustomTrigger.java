@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.laton95.pyramidplunder.reference.ModReference;
+import com.laton95.pyramidplunder.PyramidPlunder;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionInstance;
@@ -26,7 +26,7 @@ public class CustomTrigger implements ICriterionTrigger
 	public CustomTrigger(String parString)
 	{
 		super();
-		ID = new ResourceLocation(ModReference.MOD_ID, parString);
+		ID = new ResourceLocation(PyramidPlunder.MOD_ID, parString);
 	}
 	
 	public CustomTrigger(ResourceLocation parRL)
