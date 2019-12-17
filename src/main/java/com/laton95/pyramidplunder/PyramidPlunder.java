@@ -22,7 +22,9 @@ import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
 import net.minecraft.world.gen.placement.ChanceConfig;
+import net.minecraft.world.gen.placement.CountRangeConfig;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -115,7 +117,9 @@ public class PyramidPlunder {
 			
 			for(Biome biome : ForgeRegistries.BIOMES.getValues()) {
 				if(!Config.isBiomeBlacklisted(biome)) {
-					biome.addFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, Biome.createDecoratedFeature(URN_FEATURE, IFeatureConfig.NO_FEATURE_CONFIG, inCave, new ChanceConfig((int) (1 / Config.urnChance))));
+					biome.addFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, URN_FEATURE.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG).func_227228_a_(inCave.func_227446_a_(new ChanceConfig((int) (1 / Config.urnChance)))));
+					
+					
 				}
 			}
 		}

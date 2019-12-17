@@ -3,6 +3,7 @@ package com.laton95.pyramidplunder.client.gui.screen.inventory;
 import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.inventory.container.UrnContainer;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +32,7 @@ public class UrnScreen extends ContainerScreen<UrnContainer> {
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.minecraft.getTextureManager().bindTexture(guiTexture);
 		int i = (width - xSize) / 2;
 		int j = (height - ySize) / 2;

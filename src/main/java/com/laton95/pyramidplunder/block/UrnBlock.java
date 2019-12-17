@@ -20,6 +20,7 @@ import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -106,16 +107,16 @@ public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 	}
 	
 	@Override
-	public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+	public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
 		if(world.isRemote) {
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 		else {
 			UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
 			
 			if(urn != null) {
 				if(state.get(OPEN)) {
-					if(!player.isSneaking()) {
+					if(!player.isCrouching()) {
 						NetworkHooks.openGui((ServerPlayerEntity) player, urn, buf -> buf.writeBlockPos(pos));
 					}
 					else if(player.getHeldItem(hand).isEmpty()) {
@@ -150,7 +151,7 @@ public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 				world.setBlockState(pos, Blocks.AIR.getDefaultState(), 4);
 			}
 			
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 	}
 	

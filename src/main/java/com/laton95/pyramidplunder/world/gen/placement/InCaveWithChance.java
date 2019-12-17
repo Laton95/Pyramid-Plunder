@@ -1,5 +1,6 @@
 package com.laton95.pyramidplunder.world.gen.placement;
 
+import com.laton95.pyramidplunder.PyramidPlunder;
 import com.laton95.pyramidplunder.config.Config;
 import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.Blocks;
@@ -37,9 +38,8 @@ public class InCaveWithChance extends Placement<ChanceConfig> {
 	
 	private BlockPos getLowestCave(IWorld world, BlockPos pos) {
 		BlockPos result = new BlockPos(pos.getX(), Config.minHeight, pos.getZ());
-		
 		while(world.getBlockState(result).getMaterial().blocksMovement() || world.getBlockState(result).getBlock() == Blocks.LAVA) {
-			if(result.getY() > Config.maxHeight || result.getY() > world.getDimension().getHorizon()) {
+			if(result.getY() > Config.maxHeight || result.getY() > world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, pos).getY()) {
 				return null;
 			}
 			result = result.up();
