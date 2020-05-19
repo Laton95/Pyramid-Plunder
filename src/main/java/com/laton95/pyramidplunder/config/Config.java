@@ -99,7 +99,7 @@ public class Config {
 			dimensionBlacklist = builder
 					.comment("Dimension ids of dimensions that urns will not generate in")
 					.translation("text.pyramidplunder.config.dimension_blacklist")
-					.defineList("dimension_blacklist", getDimensionBlacklistDefault(), i -> i instanceof Integer);
+					.defineList("dimension_blacklist", getDimensionBlacklistDefault(), i -> i instanceof String);
 			
 			biomeBlacklist = builder
 					.comment("Biomes to not generate urns in, in format \"mod_id:biome_id\". E.g. \"minecraft:desert\"")

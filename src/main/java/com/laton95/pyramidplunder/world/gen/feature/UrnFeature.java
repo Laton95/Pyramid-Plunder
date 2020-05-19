@@ -8,6 +8,7 @@ import com.mojang.datafixers.Dynamic;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.ChunkGenerator;
@@ -34,10 +35,10 @@ public class UrnFeature extends Feature<NoFeatureConfig> {
 				world.setBlockState(pos.down(), Blocks.STONE.getDefaultState(), 11);
 			}
 			
-			UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
-			if(urn != null) {
-				urn.setLootTable(UrnTileEntity.URN_LOOT, random.nextLong());
-				urn.putSnake(random);
+			TileEntity urn = world.getTileEntity(pos);
+			if(urn instanceof UrnTileEntity) {
+				((UrnTileEntity) urn).setLootTable(UrnTileEntity.URN_LOOT, random.nextLong());
+				((UrnTileEntity) urn).putSnake(random);
 			}
 			
 			return true;

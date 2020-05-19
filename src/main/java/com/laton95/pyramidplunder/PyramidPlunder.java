@@ -117,9 +117,7 @@ public class PyramidPlunder {
 			
 			for(Biome biome : ForgeRegistries.BIOMES.getValues()) {
 				if(!Config.isBiomeBlacklisted(biome)) {
-					biome.addFeature(GenerationStage.Decoration.UNDERGROUND_DECORATION, URN_FEATURE.func_225566_b_(IFeatureConfig.NO_FEATURE_CONFIG).func_227228_a_(inCave.func_227446_a_(new ChanceConfig((int) (1 / Config.urnChance)))));
-					
-					
+					biome.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, URN_FEATURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(inCave.configure(new ChanceConfig((int) (1 / Config.urnChance)))));
 				}
 			}
 		}
