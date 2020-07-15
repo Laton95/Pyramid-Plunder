@@ -175,7 +175,7 @@ public class UrnBlock extends ContainerBlock implements IWaterLoggable {
 				
 				if(((UrnTileEntity) tileentity).hasSnake()) {
 					PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ());
-					if(player != null) {
+					if(player != null && player.getPosition().withinDistance(pos, 10)) {
 						ModCriteriaTriggers.SNAKE_BITE.trigger((ServerPlayerEntity) player);
 						int duration = 15;
 						player.addPotionEffect(new EffectInstance(Effects.POISON, duration * 20));
