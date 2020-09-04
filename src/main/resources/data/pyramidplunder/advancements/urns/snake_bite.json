@@ -10,10 +10,18 @@
       "translate": "advancements.pyramidplunder.urns.snake_bite.description"
     }
   },
-  "parent": "pyramidplunder:urns/loot_urn",
+  "parent": "pyramidplunder:urns/root",
   "criteria": {
     "loot_urn": {
-      "trigger": "pyramidplunder:snake_bite"
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "block": "pyramidplunder:urn",
+            "nbt": "{HasSnake: true}"
+          }
+        }
+      }
     }
   }
 }

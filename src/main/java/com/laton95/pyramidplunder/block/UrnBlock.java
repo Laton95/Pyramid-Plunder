@@ -1,15 +1,14 @@
 package com.laton95.pyramidplunder.block;
 
 import com.laton95.pyramidplunder.PyramidPlunder;
-import com.laton95.pyramidplunder.advancements.ModCriteriaTriggers;
 import com.laton95.pyramidplunder.tileentity.UrnTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
@@ -38,175 +37,161 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 
 public class UrnBlock extends ContainerBlock implements IWaterLoggable {
-	
-	private static final VoxelShape LID = Block.makeCuboidShape(2.0D, 15.0D, 2.0D, 14.0D, 16.0D, 14.0D);
-	
-	private static final VoxelShape TOP = Block.makeCuboidShape(1.0D, 13.0D, 1.0D, 15.0D, 15.0D, 15.0D);
-	
-	private static final VoxelShape NECK = Block.makeCuboidShape(3.0D, 10.0D, 3.0D, 13.0D, 13.0D, 13.0D);
-	
-	private static final VoxelShape BOTTOM = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
-	
-	private static final VoxelShape SHAPE = VoxelShapes.or(TOP, NECK, BOTTOM);
-	
-	private static final VoxelShape SHAPE_WITH_LID = VoxelShapes.or(SHAPE, LID);
-	
-	public static final BooleanProperty OPEN = BooleanProperty.create("open");
-	
-	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	
-	public UrnBlock() {
-		super(Properties.create(Material.ROCK).hardnessAndResistance(1.5f, 10.0f));
-		this.setDefaultState(this.stateContainer.getBaseState().with(OPEN, true).with(WATERLOGGED, false));
-	}
-	
-	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-		builder.add(OPEN, WATERLOGGED);
-	}
-	
-	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-		return state.get(OPEN) ? SHAPE : SHAPE_WITH_LID;
-	}
-	
-	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.MODEL;
-	}
-	
-	@Nullable
-	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		return this.getDefaultState().with(WATERLOGGED, context.getWorld().getFluidState(context.getPos()).getFluid() == Fluids.WATER);
-	}
-	
-	@Nullable
-	@Override
-	public TileEntity createNewTileEntity(IBlockReader world) {
-		return new UrnTileEntity();
-	}
-	
-	@Override
-	public boolean hasComparatorInputOverride(BlockState state) {
-		return true;
-	}
-	
-	@Override
-	public int getComparatorInputOverride(BlockState state, World world, BlockPos pos) {
-		return Container.calcRedstone(world.getTileEntity(pos));
-	}
-	
-	@Override
-	public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld world, BlockPos currentPos, BlockPos facingPos) {
-		if(state.get(WATERLOGGED)) {
-			world.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
-		}
-		
-		return super.updatePostPlacement(state, facing, facingState, world, currentPos, facingPos);
-	}
-	
-	@Override
-	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-		if(world.isRemote) {
-			return ActionResultType.SUCCESS;
-		}
-		else {
-			UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
-			
-			if(urn != null) {
-				if(state.get(OPEN)) {
-					if(!player.isCrouching()) {
-						NetworkHooks.openGui((ServerPlayerEntity) player, urn, buf -> buf.writeBlockPos(pos));
-					}
-					else if(player.getHeldItem(hand).isEmpty()) {
-						world.setBlockState(pos, state.with(OPEN, false), 4);
-					}
-				}
-				else {
-					if(urn.hasSnake()) {
-						if(player.getHeldItem(hand).getItem() == PyramidPlunder.SNAKE_CHARM) {
-							ModCriteriaTriggers.CHARM_SNAKE.trigger((ServerPlayerEntity) player);
-							player.sendMessage(new TranslationTextComponent(getCharmMessage(state), player.getDisplayName()));
-						}
-						else {
-							ModCriteriaTriggers.SNAKE_BITE.trigger((ServerPlayerEntity) player);
-							int duration = 15;
-							player.addPotionEffect(new EffectInstance(Effects.POISON, duration * 20));
-							player.sendMessage(new TranslationTextComponent(getPoisonMessage(state), player.getDisplayName()));
-							player.attackEntityFrom(new DamageSource(getDamageType(state)), 3);
-						}
-						
-						urn.removeSnake();
-					}
-					
-					if(urn.hasLoot()) {
-						ModCriteriaTriggers.LOOT_URN.trigger((ServerPlayerEntity) player);
-					}
-					
-					world.setBlockState(pos, state.with(OPEN, true), 4);
-				}
-			}
-			else {
-				world.setBlockState(pos, Blocks.AIR.getDefaultState(), 4);
-			}
-			
-			return ActionResultType.SUCCESS;
-		}
-	}
-	
-	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-		if(stack.hasDisplayName()) {
-			TileEntity tileentity = world.getTileEntity(pos);
-			if(tileentity instanceof UrnTileEntity) {
-				((UrnTileEntity) tileentity).setCustomName(stack.getDisplayName());
-			}
-		}
-	}
-	
-	@Override
-	public void onReplaced(BlockState oldState, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-		if(oldState.getBlock() != newState.getBlock()) {
-			TileEntity tileentity = world.getTileEntity(pos);
-			if(tileentity instanceof UrnTileEntity) {
-				InventoryHelper.dropInventoryItems(world, pos, (UrnTileEntity) tileentity);
-				world.updateComparatorOutputLevel(pos, this);
-				
-				if(((UrnTileEntity) tileentity).hasSnake()) {
-					PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ());
-					if(player != null && player.getPosition().withinDistance(pos, 10)) {
-						ModCriteriaTriggers.SNAKE_BITE.trigger((ServerPlayerEntity) player);
-						int duration = 15;
-						player.addPotionEffect(new EffectInstance(Effects.POISON, duration * 20));
-						player.sendMessage(new TranslationTextComponent(getBrokenPoisonMessage(oldState), player.getDisplayName()));
-						player.attackEntityFrom(new DamageSource(getDamageType(oldState)), 3);
-					}
-				}
-			}
-			
-			super.onReplaced(oldState, world, pos, newState, isMoving);
-		}
-	}
-	
-	private String getCharmMessage(BlockState state) {
-		return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.charm_underwater" : "tile.pyramidplunder.urn.charm";
-	}
-	
-	private String getPoisonMessage(BlockState state) {
-		return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.poison_underwater" : "tile.pyramidplunder.urn.poison";
-	}
-	
-	private String getBrokenPoisonMessage(BlockState state) {
-		return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.poison_broken_underwater" : "tile.pyramidplunder.urn.poison_broken";
-	}
-	
-	private String getDamageType(BlockState state) {
-		return state.get(WATERLOGGED) ? "eelbite" : "snakebite";
-	}
-	
-	@Override
-	public IFluidState getFluidState(BlockState state) {
-		return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
-	}
+
+    private static final VoxelShape LID = Block.makeCuboidShape(2.0D, 15.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+
+    private static final VoxelShape TOP = Block.makeCuboidShape(1.0D, 13.0D, 1.0D, 15.0D, 15.0D, 15.0D);
+
+    private static final VoxelShape NECK = Block.makeCuboidShape(3.0D, 10.0D, 3.0D, 13.0D, 13.0D, 13.0D);
+
+    private static final VoxelShape BOTTOM = Block.makeCuboidShape(1.0D, 0.0D, 1.0D, 15.0D, 10.0D, 15.0D);
+
+    private static final VoxelShape SHAPE = VoxelShapes.or(TOP, NECK, BOTTOM);
+
+    private static final VoxelShape SHAPE_WITH_LID = VoxelShapes.or(SHAPE, LID);
+
+    public static final BooleanProperty OPEN = BooleanProperty.create("open");
+
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+    public UrnBlock() {
+        super(Properties.create(Material.ROCK).hardnessAndResistance(1.5f, 10.0f));
+        this.setDefaultState(this.stateContainer.getBaseState().with(OPEN, true).with(WATERLOGGED, false));
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(OPEN, WATERLOGGED);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+        return state.get(OPEN) ? SHAPE : SHAPE_WITH_LID;
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        return this.getDefaultState().with(WATERLOGGED, context.getWorld().getFluidState(context.getPos()).getFluid() == Fluids.WATER);
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(IBlockReader worldIn) {
+        return new UrnTileEntity();
+    }
+
+    @Override
+    public boolean hasComparatorInputOverride(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride(BlockState state, World world, BlockPos pos) {
+        return Container.calcRedstone(world.getTileEntity(pos));
+    }
+
+    @Override
+    public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld world, BlockPos currentPos, BlockPos facingPos) {
+        if (state.get(WATERLOGGED)) {
+            world.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        }
+
+        return super.updatePostPlacement(state, facing, facingState, world, currentPos, facingPos);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+    }
+
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        if (!world.isRemote) {
+            UrnTileEntity urn = (UrnTileEntity) world.getTileEntity(pos);
+
+            if (urn != null) {
+                if (state.get(OPEN)) {
+                    if (player.isCrouching() && player.getHeldItem(hand).isEmpty() && !urn.hasSnake()) {
+                        world.setBlockState(pos, state.with(OPEN, false), 4);
+                    } else {
+                        if (urn.hasSnake()) {
+                            urn.removeSnake();
+                        }
+                        NetworkHooks.openGui((ServerPlayerEntity) player, urn, buf -> buf.writeBlockPos(pos));
+                    }
+                } else {
+                    if (urn.hasSnake()) {
+                        if (player.getHeldItem(hand).getItem() == PyramidPlunder.SNAKE_CHARM.get()) {
+                            player.sendMessage(new TranslationTextComponent(getCharmMessage(state), player.getDisplayName()), player.getUniqueID());
+                        } else {
+                            int duration = 15;
+                            player.addPotionEffect(new EffectInstance(Effects.POISON, duration * 20));
+                            player.sendMessage(new TranslationTextComponent(getPoisonMessage(state), player.getDisplayName()), player.getUniqueID());
+                            player.attackEntityFrom(new DamageSource(getDamageType(state)), 3);
+                        }
+                    }
+
+                    world.setBlockState(pos, state.with(OPEN, true), 4);
+                }
+            } else {
+                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 4);
+            }
+        }
+        return ActionResultType.SUCCESS;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (stack.hasDisplayName()) {
+            TileEntity tileentity = world.getTileEntity(pos);
+            if (tileentity instanceof UrnTileEntity) {
+                ((UrnTileEntity) tileentity).setCustomName(stack.getDisplayName());
+            }
+        }
+    }
+
+    @Override
+    public void onReplaced(BlockState oldState, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (oldState.getBlock() != newState.getBlock()) {
+            TileEntity tileentity = world.getTileEntity(pos);
+            if (tileentity instanceof UrnTileEntity) {
+                InventoryHelper.dropInventoryItems(world, pos, (UrnTileEntity) tileentity);
+                world.updateComparatorOutputLevel(pos, this);
+
+                if (((UrnTileEntity) tileentity).hasSnake() && !oldState.get(OPEN)) {
+                    PlayerEntity player = world.getClosestPlayer(pos.getX(), pos.getY(), pos.getZ(), 10, false);
+                    if (player != null) {
+                        int duration = 15;
+                        player.addPotionEffect(new EffectInstance(Effects.POISON, duration * 20));
+                        player.sendMessage(new TranslationTextComponent(getBrokenPoisonMessage(oldState), player.getDisplayName()), player.getUniqueID());
+                        player.attackEntityFrom(new DamageSource(getDamageType(oldState)), 3);
+                    }
+                }
+            }
+
+            super.onReplaced(oldState, world, pos, newState, isMoving);
+        }
+    }
+
+    private String getCharmMessage(BlockState state) {
+        return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.charm_underwater" : "tile.pyramidplunder.urn.charm";
+    }
+
+    private String getPoisonMessage(BlockState state) {
+        return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.poison_underwater" : "tile.pyramidplunder.urn.poison";
+    }
+
+    private String getBrokenPoisonMessage(BlockState state) {
+        return state.get(WATERLOGGED) ? "tile.pyramidplunder.urn.poison_broken_underwater" : "tile.pyramidplunder.urn.poison_broken";
+    }
+
+    private String getDamageType(BlockState state) {
+        return state.get(WATERLOGGED) ? "eelbite" : "snakebite";
+    }
 }

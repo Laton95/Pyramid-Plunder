@@ -6,8 +6,16 @@
     ]
   },
   "criteria": {
-    "has_item": {
-      "trigger": "pyramidplunder:snake_bite"
+    "been_bitten": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "block": "pyramidplunder:urn",
+            "nbt": "{HasSnake: true}"
+          }
+        }
+      }
     },
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
@@ -18,7 +26,7 @@
   },
   "requirements": [
     [
-      "has_item",
+      "been_bitten",
       "has_the_recipe"
     ]
   ]

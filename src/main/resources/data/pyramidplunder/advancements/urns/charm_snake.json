@@ -13,7 +13,18 @@
   "parent": "pyramidplunder:urns/craft_snake_charm",
   "criteria": {
     "loot_urn": {
-      "trigger": "pyramidplunder:charm_snake"
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": {
+          "block": {
+            "block": "pyramidplunder:urn",
+            "nbt": "{HasSnake: true}"
+          }
+        },
+        "item": {
+          "item": "pyramidplunder:snake_charm"
+        }
+      }
     }
   }
 }
